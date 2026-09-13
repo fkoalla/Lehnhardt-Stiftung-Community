@@ -1,0 +1,92 @@
+---
+layout: default
+title: Start
+---
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="hero-eyebrow">Ein Projekt von PORA-Teilnehmenden für PORA-Teilnehmende</div>
+      <h1>Gemeinsam stark: die Community rund um die PORA-Seminare</h1>
+      <p class="lead">
+        Eltern, Fachpersonen und Therapeut:innen, die an den PORA-Seminaren der
+        Lehnhardt-Stiftung teilnehmen, tauschen sich hier über Alltag, Hörverlust,
+        Cochlea-Implantat-Rehabilitation und Inklusion aus — in eigenen
+        Erfahrungsberichten und offenen Diskussionen.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-accent" href="{{ '/mitmachen.html' | relative_url }}">Eigenen Beitrag teilen</a>
+        <a class="btn btn-outline" style="border-color:#fff;color:#fff;" href="{{ '/blog.html' | relative_url }}">Blog entdecken</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <h3>Warum diese Community?</h3>
+      <ul>
+        <li>Aus PORA-Seminaren wird echter, dauerhafter Austausch.</li>
+        <li>Erfahrungswissen von Eltern trifft auf Fachwissen von Therapeut:innen.</li>
+        <li>Ein Ort für Fragen, die im Seminar keinen Platz mehr fanden.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Neu im Blog</h2>
+        <p>Erfahrungsberichte, Praxistipps und Reflexionen aus der PORA-Community.</p>
+      </div>
+      <a class="btn btn-outline" href="{{ '/blog.html' | relative_url }}">Alle Beiträge</a>
+    </div>
+    <div class="post-grid">
+      {% for post in site.posts limit:3 %}
+        {% include post-card.html post=post %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="block alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Was diese Community trägt</h2>
+        <p>Der Blog ergänzt die PORA-Seminare der Lehnhardt-Stiftung um einen Ort des dauerhaften Austauschs.</p>
+      </div>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="icon">✎</div>
+        <h3>Erfahrungsberichte</h3>
+        <p>Eltern und Fachpersonen berichten aus ihrem Alltag mit Hörverlust und Cochlea-Implantat.</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">💬</div>
+        <h3>Offener Austausch</h3>
+        <p>Jeder Beitrag lädt zur Diskussion ein — Fragen und andere Perspektiven sind ausdrücklich willkommen.</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">🎓</div>
+        <h3>Anknüpfung an PORA</h3>
+        <p>Themen aus den Online-Seminaren werden hier vertieft, kommentiert und weitergedacht.</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">🤝</div>
+        <h3>Von der Community getragen</h3>
+        <p>Beiträge kommen von Teilnehmenden selbst — die Redaktion moderiert und unterstützt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <div class="cta-banner">
+      <div>
+        <h3>Deine Stimme fehlt noch</h3>
+        <p>Teile eine Erfahrung, eine Frage oder einen Tipp mit der Community.</p>
+      </div>
+      <a class="btn btn-outline" href="{{ '/mitmachen.html' | relative_url }}">Beitrag einreichen</a>
+    </div>
+  </div>
+</section>
