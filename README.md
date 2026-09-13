@@ -56,7 +56,7 @@ bundle install
 bundle exec jekyll serve
 ```
 
-Die Seite ist danach unter `http://localhost:4000/lehnhardt-stiftung-community/`
+Die Seite ist danach unter `http://localhost:4000/Lehnhardt-Stiftung-Community/`
 erreichbar (Pfad passend zu `baseurl` in `_config.yml`).
 
 ## Auf GitHub Pages veröffentlichen
