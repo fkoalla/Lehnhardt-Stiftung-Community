@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<header class="article-header">
+  <div class="wrap">
+    {% if page.category %}<div class="tag">{{ page.category }}</div>{% endif %}
+    <h1>{{ page.title }}</h1>
+    <div class="article-meta">
+      {{ page.date | date: "%d. %B %Y" }}{% if page.author %} · {{ page.author }}{% endif %}
+    </div>
+  </div>
+</header>
+
+<div class="article-body">
+  {{ content }}
+</div>
+
+<div class="wrap">
+  <div class="article-footer-cta">
+    <h3>Möchtest du dazu deine eigene Erfahrung teilen?</h3>
+    <p>Der PORA Community-Blog lebt vom Austausch. <a href="{{ '/mitmachen.html' | relative_url }}">Reiche einen eigenen Beitrag ein</a> oder diskutiere direkt unten im Kommentarbereich.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  {% include comments.html %}
+</div>
