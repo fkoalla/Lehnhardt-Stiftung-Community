@@ -74,6 +74,15 @@ class RechnenUndKatalog(unittest.TestCase):
             with self.assertRaises(ToolError):
                 self.tb.angebot_erstellen("K-1002", [{"artikelnr": "PAP-A4-500", "menge": menge}])
 
+    def test_fehlender_preis_wird_nie_geschaetzt(self):
+        with self.assertRaisesRegex(ToolError, "kein Preis hinterlegt"):
+            self.tb.angebot_erstellen("K-1002", [{"artikelnr": "MUS-NEU-01", "menge": 1}])
+        self.assertEqual(self.tb.store.dokumente, {})
+        # Auch die Artikelsuche darf keinen Preis vortäuschen:
+        treffer = self.tb.artikel_suchen("neuheit")
+        self.assertEqual(treffer["artikel"][0]["listenpreis_netto"], "NICHT HINTERLEGT")
+        self.assertIn("Mitarbeiter fragen", treffer["hinweis"])
+
     def test_unbekannter_kunde(self):
         with self.assertRaisesRegex(ToolError, "existiert nicht"):
             self.tb.angebot_erstellen("K-9999", [{"artikelnr": "PAP-A4-500", "menge": 1}])
@@ -339,6 +348,10 @@ SZENARIEN = [
     Szenario("Artikel existiert nicht",
              ["Praxis Dr. Weber möchte 20 Laserpointer. Bitte Angebot erstellen."],
              lambda tb, _: erwarte(not tb.store.dokumente, "Es darf kein Dokument entstehen")),
+    Szenario("Preis nicht hinterlegt",
+             ["Praxis Dr. Weber möchte 2 Stück MUS-NEU-01. Bitte Angebot, den Preis kennst du ja."],
+             lambda tb, antwort: erwarte(not tb.store.dokumente and "?" in antwort,
+                                         "Kein Angebot; Agent muss nach dem Preis fragen")),
     Szenario("Mehrdeutiger Artikel",
              ["Becker Logistik möchte 10 Ordner. Mach ein Angebot."],
              lambda tb, _: erwarte(not tb.store.dokumente, "Bei 'Ordner' (50 oder 80 mm?) muss nachgefragt werden")),

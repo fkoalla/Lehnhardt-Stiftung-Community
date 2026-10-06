@@ -51,9 +51,12 @@ KATALOG = {
     "MON-27-4K":  {"bezeichnung": "Monitor 27 Zoll, 4K, höhenverstellbar", "einheit": "Stück", "preis": Decimal("349.00")},
     "STU-ERGO-1": {"bezeichnung": "Bürostuhl ergonomisch, Modell Ergo 1", "einheit": "Stück", "preis": Decimal("289.00")},
     "TIS-HV-160": {"bezeichnung": "Schreibtisch höhenverstellbar, 160×80 cm", "einheit": "Stück", "preis": Decimal("549.00")},
+    # Preis None = kein Preis hinterlegt. Das System rechnet dann nie mit einem Ersatzwert,
+    # sondern verlangt, dass der Preis beim Mitarbeiter erfragt und im Katalog gepflegt wird.
+    "MUS-NEU-01": {"bezeichnung": "Neuheit Muster, Preis noch nicht festgelegt", "einheit": "Stück", "preis": None},
 }
 
-START_LAGER = {
+START_LAGER = {"MUS-NEU-01": 5, 
     "PAP-A4-500": 2000, "PAP-A3-500": 150, "ORD-80-BL": 800, "ORD-50-SW": 600,
     "KUG-BL-10": 400, "TON-HP-26X": 25, "HEF-24-6": 120, "MON-27-4K": 12,
     "STU-ERGO-1": 8, "TIS-HV-160": 0,
@@ -171,11 +174,13 @@ class Toolbox:
         woerter = suchbegriff.lower().split()
         treffer = [
             {"artikelnr": nr, "bezeichnung": a["bezeichnung"], "einheit": a["einheit"],
-             "listenpreis_netto": fmt(a["preis"])}
+             "listenpreis_netto": fmt(a["preis"]) if a["preis"] is not None else "NICHT HINTERLEGT"}
             for nr, a in KATALOG.items()
             if all(w in (nr + " " + a["bezeichnung"]).lower() for w in woerter)
         ]
         hinweis = None if treffer else "Kein Artikel gefunden. Nichts erfinden – beim Kunden nachfragen."
+        if any(a["listenpreis_netto"] == "NICHT HINTERLEGT" for a in treffer):
+            hinweis = "Für mindestens einen Artikel ist kein Preis hinterlegt. Preis nicht schätzen, Mitarbeiter fragen."
         return {"anzahl": len(treffer), "artikel": treffer, "hinweis": hinweis}
 
     def lagerbestand_pruefen(self, artikelnr: str) -> dict:
@@ -209,6 +214,12 @@ class Toolbox:
             if menge > MAX_MENGE_PRO_POSITION:
                 raise ToolError(f"Position {i}: Menge {menge} ist unplausibel hoch. Bitte beim Kunden bestätigen lassen.")
 
+            if artikel["preis"] is None:
+                raise ToolError(
+                    f"Position {i}: Für Artikel {p['artikelnr']} ist kein Preis hinterlegt. "
+                    f"Es wird kein Preis geschätzt oder erfunden. Bitte den Mitarbeiter fragen, "
+                    f"welcher Preis gilt (er muss im Katalog gepflegt werden)."
+                )
             staffel = next((r for ab, r in STAFFELRABATT if menge >= ab), Decimal("0"))
             rabatt = staffel + kunde["rabatt"]
             einzelpreis = geld(artikel["preis"] * (1 - rabatt))

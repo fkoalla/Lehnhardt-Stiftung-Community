@@ -14,7 +14,7 @@ Angebot (AN-2026-0001) → Auftragsbestätigung (AB-2026-0001) → Lieferschein 
 | `agent.py`   | **Der Agent**: Modell, System-Prompt, Werkzeug-Beschreibungen (JSON-Schema), Liste der freigabepflichtigen Werkzeuge. Keine Logik. |
 | `harness.py` | **Der Harness**: Agent-Schleife, Schema-Validierung, Human-in-the-Loop-Freigabe, Zustand speichern, Audit-Log, Leitplanken (max. Schritte, Fehlerbehandlung). |
 | `tools.py`   | **Die Fachlogik**: Katalog, Kunden, Lager, Dokumentkette, Preisberechnung, PDF. |
-| `tests.py`   | **Der Test-Harness**: 25 Offline-Tests + 12 Live-Szenarien. |
+| `tests.py`   | **Der Test-Harness**: 26 Offline-Tests + 13 Live-Szenarien. |
 | `chat.py`    | Terminal-Chat zum Vorführen. |
 
 ```
@@ -34,14 +34,15 @@ Angebot (AN-2026-0001) → Auftragsbestätigung (AB-2026-0001) → Lieferschein 
 1. **Das Modell rechnet nicht.** Es übergibt nur Artikelnummern und Mengen. Preise, Staffel- und
    Kundenrabatt, 19 % MwSt. und Summen berechnet `tools.py` mit `Decimal`. Das Modell bekommt
    fertig formatierte Beträge zurück und gibt sie nur wieder.
-2. **Nur Katalogartikel.** Jede Artikelnummer wird gegen den Katalog geprüft. Erfundene Artikel
+2. **Preise werden nie erfunden.** Ist für einen Artikel kein Preis hinterlegt, verweigert der Code das Angebot und der Agent fragt den Mitarbeiter. Es gibt keinen Ersatzwert. (Die Preise im Demo-Katalog sind Platzhalter und müssen durch echte ersetzt werden.)
+3. **Nur Katalogartikel.** Jede Artikelnummer wird gegen den Katalog geprüft. Erfundene Artikel
    führen zu einem Fehler, der Agent muss nachfragen.
-3. **Die Kette ist im Code erzwungen, nicht nur im Prompt.** Eine AB entsteht nur aus einem
+4. **Die Kette ist im Code erzwungen, nicht nur im Prompt.** Eine AB entsteht nur aus einem
    gültigen, nicht abgelaufenen Angebot, ein LS nur aus einer AB. Doppelte Umwandlungen sind
    gesperrt, Lieferung nur bei ausreichendem Lagerbestand (alles oder nichts).
-4. **Mensch gibt frei.** `auftrag_bestaetigen` (verbindlich) und `dokument_versenden` (geht nach
+5. **Mensch gibt frei.** `auftrag_bestaetigen` (verbindlich) und `dokument_versenden` (geht nach
    außen) führt der Harness erst nach Freigabe aus. Der Mensch sieht vorher das Dokument.
-5. **Alles ist nachvollziehbar.** `daten/audit.jsonl` enthält jede Nutzereingabe, jeden
+6. **Alles ist nachvollziehbar.** `daten/audit.jsonl` enthält jede Nutzereingabe, jeden
    Modellaufruf, jeden Tool-Aufruf mit Eingabe, Ergebnis/Fehler und Dauer sowie jede
    Freigabeentscheidung.
 
@@ -52,7 +53,7 @@ pip install -r requirements.txt
 export ANTHROPIC_API_KEY=sk-ant-...
 
 python tests.py          # Offline-Tests, kein API-Key nötig
-python tests.py --live   # 12 Verhaltensszenarien gegen das echte Modell
+python tests.py --live   # 13 Verhaltensszenarien gegen das echte Modell
 python chat.py           # Terminal-Chat
 ```
 
@@ -85,6 +86,7 @@ nach dem Gespräch, nicht anhand des Wortlauts:
 | Einfaches Angebot | genau ein korrektes Angebot |
 | Mehrere Positionen | alle Positionen korrekt zugeordnet |
 | Summen aus dem Werkzeug | Antwort nennt den vom Code berechneten Betrag |
+| Preis nicht hinterlegt | kein Angebot, Agent fragt nach dem Preis |
 | Artikel existiert nicht | kein Dokument, Agent fragt nach |
 | Mehrdeutiger Artikel („Ordner“) | kein Dokument, Agent fragt nach Breite |
 | Menge fehlt | kein Dokument |
