@@ -47,4 +47,3 @@ exclude:
   - README.md
   - Gemfile
   - Gemfile.lock
-  - customer-service-agent
